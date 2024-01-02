@@ -17,7 +17,9 @@ namespace MyDCBank.Models
         [MaxLength(50)]
         public string LastName { get; set; }
 
-        [Required]
+        
+        [DataType(DataType.Date)]
+        [Required(ErrorMessage = "Birth date is required.")]
         public DateTime DateOfBirth { get; set; }
 
         [Required]
@@ -25,14 +27,16 @@ namespace MyDCBank.Models
         [MaxLength(100)]
         public string Email { get; set; }
 
-        [Phone]
-        [MaxLength(15)]
-        public string Phone { get; set; }
 
         [MaxLength(225)]
         public string Address { get; set; }
 
-
         public List<Account>accounts { get; set; }
+
+        [ForeignKey("UserID")]
+        public int UserID { get; set; }
+
+        //navigation property
+        public User Users { get; set; }
     }
 }

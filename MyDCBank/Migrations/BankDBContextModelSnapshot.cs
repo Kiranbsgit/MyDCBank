@@ -30,6 +30,11 @@ namespace MyDCBank.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AccountID"), 1L, 1);
 
+                    b.Property<string>("AccountNumber")
+                        .IsRequired()
+                        .HasMaxLength(11)
+                        .HasColumnType("nvarchar(11)");
+
                     b.Property<string>("AccountType")
                         .IsRequired()
                         .HasMaxLength(20)
@@ -38,11 +43,14 @@ namespace MyDCBank.Migrations
                     b.Property<decimal>("Balance")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("CustomerID")
+                    b.Property<int?>("CustomerID")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("OpenDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("customer")
+                        .HasColumnType("int");
 
                     b.HasKey("AccountID");
 
@@ -64,21 +72,24 @@ namespace MyDCBank.Migrations
                         .HasMaxLength(3)
                         .HasColumnType("nvarchar(3)");
 
+                    b.Property<string>("CardHolderName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("CardNumber")
                         .IsRequired()
                         .HasMaxLength(16)
                         .HasColumnType("nvarchar(16)");
-
-                    b.Property<string>("CardType")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
 
                     b.Property<int>("CustomerID")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("ExpiryDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("Type")
+                        .HasMaxLength(20)
+                        .HasColumnType("int");
 
                     b.HasKey("CardID");
 
@@ -96,7 +107,6 @@ namespace MyDCBank.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CustomerID"), 1L, 1);
 
                     b.Property<string>("Address")
-                        .IsRequired()
                         .HasMaxLength(225)
                         .HasColumnType("nvarchar(225)");
 
@@ -118,12 +128,13 @@ namespace MyDCBank.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<string>("Phone")
-                        .IsRequired()
-                        .HasMaxLength(15)
-                        .HasColumnType("nvarchar(15)");
+                    b.Property<int>("UserID")
+                        .HasColumnType("int");
 
                     b.HasKey("CustomerID");
+
+                    b.HasIndex("UserID")
+                        .IsUnique();
 
                     b.ToTable("Customers");
                 });
@@ -157,7 +168,7 @@ namespace MyDCBank.Migrations
                     b.ToTable("Transactions");
                 });
 
-            modelBuilder.Entity("MyDCBank.Models.UserCredential", b =>
+            modelBuilder.Entity("MyDCBank.Models.User", b =>
                 {
                     b.Property<int>("UserID")
                         .ValueGeneratedOnAdd()
@@ -165,23 +176,15 @@ namespace MyDCBank.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserID"), 1L, 1);
 
-                    b.Property<int>("CustomerID")
-                        .HasColumnType("int");
-
-                    b.Property<string>("PasswordHash")
+                    b.Property<string>("Email")
                         .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
-                    b.Property<string>("SecurityAnswer")
+                    b.Property<string>("Password")
                         .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
-
-                    b.Property<string>("SecurityQuestion")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("UserName")
                         .IsRequired()
@@ -190,20 +193,89 @@ namespace MyDCBank.Migrations
 
                     b.HasKey("UserID");
 
-                    b.HasIndex("CustomerID");
+                    b.ToTable("Users");
+                });
 
-                    b.ToTable("UserCredentials");
+            modelBuilder.Entity("MyDCBank.Models.UserLoginModel", b =>
+                {
+                    b.Property<string>("UserName")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("UserName");
+
+                    b.ToTable("userLoginModels");
+                });
+
+            modelBuilder.Entity("MyDCBank.Models.UserRegistrationModel", b =>
+                {
+                    b.Property<string>("UserName")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasMaxLength(225)
+                        .HasColumnType("nvarchar(225)");
+
+                    b.Property<string>("ConfirmPassword")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("DateOfBirth")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SecurityAnswer")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SecurityQuestion")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ZipCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("UserName");
+
+                    b.ToTable("userRegistrationModels");
                 });
 
             modelBuilder.Entity("MyDCBank.Models.Account", b =>
                 {
-                    b.HasOne("MyDCBank.Models.Customer", "customer")
+                    b.HasOne("MyDCBank.Models.Customer", "Customer")
                         .WithMany("accounts")
-                        .HasForeignKey("CustomerID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CustomerID");
 
-                    b.Navigation("customer");
+                    b.Navigation("Customer");
                 });
 
             modelBuilder.Entity("MyDCBank.Models.Card", b =>
@@ -217,6 +289,17 @@ namespace MyDCBank.Migrations
                     b.Navigation("Customer");
                 });
 
+            modelBuilder.Entity("MyDCBank.Models.Customer", b =>
+                {
+                    b.HasOne("MyDCBank.Models.User", "Users")
+                        .WithOne("Customer")
+                        .HasForeignKey("MyDCBank.Models.Customer", "UserID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Users");
+                });
+
             modelBuilder.Entity("MyDCBank.Models.Transaction", b =>
                 {
                     b.HasOne("MyDCBank.Models.Account", "Account")
@@ -228,17 +311,6 @@ namespace MyDCBank.Migrations
                     b.Navigation("Account");
                 });
 
-            modelBuilder.Entity("MyDCBank.Models.UserCredential", b =>
-                {
-                    b.HasOne("MyDCBank.Models.Customer", "Customer")
-                        .WithMany()
-                        .HasForeignKey("CustomerID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Customer");
-                });
-
             modelBuilder.Entity("MyDCBank.Models.Account", b =>
                 {
                     b.Navigation("Transactions");
@@ -247,6 +319,11 @@ namespace MyDCBank.Migrations
             modelBuilder.Entity("MyDCBank.Models.Customer", b =>
                 {
                     b.Navigation("accounts");
+                });
+
+            modelBuilder.Entity("MyDCBank.Models.User", b =>
+                {
+                    b.Navigation("Customer");
                 });
 #pragma warning restore 612, 618
         }

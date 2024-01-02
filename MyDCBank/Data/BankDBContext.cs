@@ -15,7 +15,9 @@ namespace MyDCBank.Data
         public DbSet<Card> cards { get; set; }
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
-        public DbSet<UserCredential> UserCredentials { get; set; }
+        public DbSet<User> Users { get; set; }
+        public DbSet<UserLoginModel> userLoginModels { get; set; }
+        public DbSet<UserRegistrationModel> userRegistrationModels { get; set; }
 
     }
 }

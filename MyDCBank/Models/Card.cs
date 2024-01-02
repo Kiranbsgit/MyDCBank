@@ -9,8 +9,10 @@ namespace MyDCBank.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int CardID { get; set; }
 
-        [Required]
-        public int CustomerID { get; set; }
+        [DataType(DataType.CreditCard)]
+        [Required(ErrorMessage = "Cardholder name is required.")]
+        public string CardHolderName { get; set; }
+
 
         [Required]
         [MaxLength(16)]
@@ -25,10 +27,13 @@ namespace MyDCBank.Models
 
         [Required]
         [MaxLength(20)]
-        public string CardType { get; set; }
+        public CardType Type { get; set; }
 
+        // Foreign key
+        [ForeignKey("Customer")]
+        public int CustomerID { get; set; }
 
-        [ForeignKey("CustomerID")]
+        // Navigation property
         public Customer Customer { get; set; }
     }
 }
