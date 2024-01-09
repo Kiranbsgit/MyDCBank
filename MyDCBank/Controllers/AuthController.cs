@@ -42,11 +42,33 @@ public class AuthController : ControllerBase
         {
             UserName = model.UserName,
             Email = model.Email,
-            Password = model.Password // In a real application, hash the password before saving it
+            Password = model.Password,
+            Address = model.Address,
+            PhoneNumber = model.PhoneNumber,
+            ZipCode = model.ZipCode
+
+            // In a real application, hash the password before saving it
             // Add other user-related properties
         };
+        var customer = new Customer
+        {
+            FirstName = model.FirstName,
+            LastName = model.LastName,
+            DateOfBirth = model.DateOfBirth,
+            Email = model.Email,
+            Address = model.Address
 
+        };
+        var securityInfo = new SecurityInfo
+        {
+          SecurityQuestion=model.SecurityQuestion,
+          SecurityAnswer = model.SecurityAnswer
+
+        };
         _context.Users.Add(user);
+        _context.Customers.Add(customer);
+        _context.securityInfo.Add(securityInfo);
+
         await _context.SaveChangesAsync();
 
         return Ok(new { Message = "Registration successful" });
@@ -60,13 +82,15 @@ public class AuthController : ControllerBase
             return BadRequest(ModelState);
         }
 
-        var user = await _context.Users.SingleOrDefaultAsync(u => u.UserName == model.UserName && u.Password == model.Password);
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.UserName == model.UserName && u.Password == model.Password);
 
         if (user == null)
         {
-            return BadRequest(new { Message = "Invalid credentials" });
+            return NotFound(new { Message = "User not found" });
         }
-
+        return Ok(new {
+        message="Logged in successfully"
+        });
         var token = GenerateJwtToken(user);
 
         return Ok(new { Token = token });

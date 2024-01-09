@@ -27,14 +27,13 @@ namespace MyDCBank.Models
         [MaxLength(100)]
         public string Email { get; set; }
 
+        [Required(ErrorMessage = "Phone number is required.")]
+        [DataType(DataType.PhoneNumber)]
+        public string PhoneNumber { get; set; }
+
 
         [MaxLength(225)]
-        public string Address { get; set; }
-
-        public List<Account>accounts { get; set; }
-
-        [ForeignKey("UserID")]
-        public int UserID { get; set; }
+        public string Address { get; set; }       
 
         //navigation property
         public User Users { get; set; }

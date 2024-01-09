@@ -23,8 +23,20 @@ namespace MyDCBank.Models
         [MaxLength(100)]
         public string Email { get; set; }
 
-        
+        [MaxLength(225)]
+        [Required(ErrorMessage = "Address is required.")]
+        public string Address { get; set; }
 
+        [Required(ErrorMessage = "Phone number is required.")]
+        [DataType(DataType.PhoneNumber)]
+        public string PhoneNumber { get; set; }
+
+
+        [Display(Name = "Zip Code")]
+        public string ZipCode { get; set; }
+
+        [ForeignKey("CustomerID")]
+        public int? CustomerID { get; set; }
         // Navigation property
         public Customer Customer { get; set; }
 

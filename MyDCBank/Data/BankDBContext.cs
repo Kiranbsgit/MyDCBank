@@ -18,6 +18,8 @@ namespace MyDCBank.Data
         public DbSet<User> Users { get; set; }
         public DbSet<UserLoginModel> userLoginModels { get; set; }
         public DbSet<UserRegistrationModel> userRegistrationModels { get; set; }
+        public DbSet<SecurityInfo> securityInfo { get; set; }
+
 
     }
 }

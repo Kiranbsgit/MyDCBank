@@ -36,4 +36,15 @@ namespace MyDCBank.Models
         // Navigation property
         public Customer Customer { get; set; }
     }
+
+
+        public enum CardType
+    {
+        Credit,
+        Debit,
+        Prepaid
+    }
+
+
+
 }
