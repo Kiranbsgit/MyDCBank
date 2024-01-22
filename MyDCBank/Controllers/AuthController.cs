@@ -41,6 +41,8 @@ public class AuthController : ControllerBase
         var user = new User
         {
             UserName = model.UserName,
+            FirstName = model.FirstName,
+            LastName = model.LastName,
             Email = model.Email,
             Password = model.Password,
             Address = model.Address,
@@ -50,24 +52,36 @@ public class AuthController : ControllerBase
             // In a real application, hash the password before saving it
             // Add other user-related properties
         };
+       
+
+
+        // to insert values into customer table
         var customer = new Customer
         {
             FirstName = model.FirstName,
             LastName = model.LastName,
             DateOfBirth = model.DateOfBirth,
             Email = model.Email,
-            Address = model.Address
+            PhoneNumber = model.PhoneNumber,
+            Address = model.Address,
+            
 
         };
+      
+        // security ans and question will be saved here
         var securityInfo = new SecurityInfo
         {
           SecurityQuestion=model.SecurityQuestion,
           SecurityAnswer = model.SecurityAnswer
 
         };
+
+        user.Customer = customer;
+        var userWithCustomer = _context.Users.Include(u => u.Customer).FirstOrDefault();
         _context.Users.Add(user);
         _context.Customers.Add(customer);
         _context.securityInfo.Add(securityInfo);
+       
 
         await _context.SaveChangesAsync();
 

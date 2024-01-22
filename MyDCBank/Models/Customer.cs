@@ -21,8 +21,7 @@ namespace MyDCBank.Models
         [DataType(DataType.Date)]
         [Required(ErrorMessage = "Birth date is required.")]
         public DateTime DateOfBirth { get; set; }
-
-        [Required]
+     
         [EmailAddress]
         [MaxLength(100)]
         public string Email { get; set; }
@@ -33,9 +32,29 @@ namespace MyDCBank.Models
 
 
         [MaxLength(225)]
-        public string Address { get; set; }       
+        public string Address { get; set; }
 
-        //navigation property
-        public User Users { get; set; }
+
+        //foreign key 
+        [Required]
+        [ForeignKey("UserID")]
+        public int UserID { get; set; }
+
+        //navigation property to show relation between customer and user.
+        
+        public User User { get; set; }
+
+        // to represent one to many relationship between  account and customer. ( one customer can have many cards).
+
+        public List<Account> accounts { get; set; } = new List<Account>();
+
+
+        
+              // to represent one to many relationship between  customer and card. ( one customer can have many cards).
+       public List<Card> cards { get; set; }
     }
+
+    // to represent one to many relationship between  customer and card. ( one customer can have many cards).
+   
+    
 }

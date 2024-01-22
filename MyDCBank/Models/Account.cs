@@ -42,10 +42,10 @@ namespace MyDCBank.Models
             
 
         // Foreign key
-        [ForeignKey("CustomerID")]
-        public int customer { get; set; }
+        public int CustomerID { get; set; }
 
         // Navigation property
+        [ForeignKey("CustomerID")]
         public Customer Customer { get; set; }
 
         // Additional properties to store first name and last name from Customer
@@ -54,7 +54,8 @@ namespace MyDCBank.Models
         public string CustomerLastName { get; set; }
 
         // Navigation property  
-        public List<Transaction> Transactions { get; set; }
+        public List<Card> Cards { get; set; } = new List<Card>();   
+        public List<Transaction> Transactions { get; set; } = new List<Transaction>();
         //-----------------------------------------------------------------------------
 
         // Constructor to copy properties from associated Customer

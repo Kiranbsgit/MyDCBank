@@ -6,13 +6,22 @@ namespace MyDCBank.Models
     public class User
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int UserID { get; set; }
 
         [Required(ErrorMessage = "Username is required.")]
         [MaxLength(50, ErrorMessage = "Username must be at most 50 characters.")]
         public string UserName { get; set; }
 
-        
+        [Required]
+        [MaxLength(50)]
+        public string FirstName { get; set; }
+
+        [Required]
+        [MaxLength(50)]
+        public string LastName { get; set; }
+
+
         [Required(ErrorMessage = "Password is required.")]
         [MaxLength(100, ErrorMessage = "Password must be at most 100 characters.")]
         [DataType(DataType.Password)]
@@ -35,14 +44,9 @@ namespace MyDCBank.Models
         [Display(Name = "Zip Code")]
         public string ZipCode { get; set; }
 
-        [ForeignKey("CustomerID")]
-        public int? CustomerID { get; set; }
-        // Navigation property
+
+        //navigation property
         public Customer Customer { get; set; }
-
-
-
-
 
     }
 }

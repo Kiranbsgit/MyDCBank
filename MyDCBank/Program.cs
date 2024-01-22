@@ -1,5 +1,6 @@
 using MyDCBank.Data;
 using Microsoft.EntityFrameworkCore;
+using MyDCBank.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 

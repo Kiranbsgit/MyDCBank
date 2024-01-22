@@ -21,5 +21,16 @@ namespace MyDCBank.Data
         public DbSet<SecurityInfo> securityInfo { get; set; }
 
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            // Define relationships and other model configurations here
+            modelBuilder.Entity<User>()
+                .HasOne(u => u.Customer)
+                .WithOne(c => c.User)
+                .HasForeignKey<Customer>(c => c.UserID);
+        }
+
+
+
     }
 }
