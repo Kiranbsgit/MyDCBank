@@ -1,4 +1,5 @@
 ﻿using System;
+using MyDCBank;
 using System.Security.Cryptography;
 
 public static class PasswordHasher

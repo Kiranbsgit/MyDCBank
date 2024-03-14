@@ -43,7 +43,7 @@ namespace MyDCBank.Models
 
         // Additional property for error message
 
-        public string ErrorMessage { get; set; }
+        
 
 
         // Foreign key

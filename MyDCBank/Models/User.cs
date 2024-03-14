@@ -1,10 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity;
-using System.ComponentModel.DataAnnotations;
+﻿    using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MyDCBank.Models
 {
-    public class User:IdentityUser<int>
+    public class User
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -44,6 +43,9 @@ namespace MyDCBank.Models
 
         [Display(Name = "Zip Code")]
         public string ZipCode { get; set; }
+
+        [Required]
+        public string Role { get; set; }             // yet to implement
 
         public string? Token { get; set; }
 

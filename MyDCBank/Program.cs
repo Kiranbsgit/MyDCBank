@@ -52,22 +52,42 @@ builder.Services.AddCors(option =>
 builder.Services.AddDbContext<BankDBContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("BankConnectionString")));   // this is for the dependency injection for the database
 builder.Services.AddScoped<IAccountService, AccountService>();// whereever we create a service class for the controller , we have to decalre it in the service class(this class).
 
-// Add UserManager<User> service
-builder.Services.AddIdentity<User, IdentityRole<int>>(options =>
-{
-    // Configure Identity options if needed
-    options.Password.RequireDigit = true;
-    options.Password.RequireLowercase = true;
-    // Add more options as needed
+ 
+    // Other service configurations...
 
-    // Set role name to 'admin'
-    options.User.RequireUniqueEmail = false;
-    options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
-    options.User.RequireUniqueEmail = false;
-    
-})
-.AddEntityFrameworkStores<BankDBContext>()
-.AddDefaultTokenProviders();
+    //// Add ASP.NET Core Identity
+    ////builder.Services.AddIdentity<User, IdentityRole<int>>(options =>
+    ////{
+    ////    // Configure password requirements
+    ////    options.Password.RequireDigit = false;
+    ////    options.Password.RequireLowercase = false;
+    ////    options.Password.RequireUppercase = false;
+    ////    options.Password.RequireNonAlphanumeric = false;
+    ////    options.Password.RequiredLength = 8;
+    ////})
+    ////.AddEntityFrameworkStores<BankDBContext>() // Specify your DbContext here
+    ////.AddDefaultTokenProviders();
+
+    // Other service configurations...
+
+
+////Add UserManager<User> service
+//builder.Services.AddIdentity<User, IdentityRole<int>>(options =>
+//{
+
+////Configure Identity options if needed
+//options.Password.RequireDigit = true;
+//options.Password.RequireLowercase = true;
+////Add more options as needed
+
+// //Set role name to 'admin'
+//options.User.RequireUniqueEmail = false;
+//options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
+//options.User.RequireUniqueEmail = false;
+
+//})
+//.AddEntityFrameworkStores<BankDBContext>()
+//.AddDefaultTokenProviders();
 
 var app = builder.Build();
 

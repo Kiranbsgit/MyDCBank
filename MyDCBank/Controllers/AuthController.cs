@@ -22,17 +22,17 @@ public class AuthController : ControllerBase
 {
     private readonly BankDBContext _context;
     private readonly IConfiguration _configuration;
-    private readonly UserManager<User> _userManager;
-    private readonly RoleManager<IdentityRole<int>> _roleManager;
+    //private readonly UserManager<User> _userManager;
+    //private readonly RoleManager<IdentityRole<int>> _roleManager;
 
 
 
-    public AuthController(BankDBContext context, IConfiguration configuration, UserManager<User> userManager, RoleManager<IdentityRole<int>> roleManager)
+    public AuthController(BankDBContext context, IConfiguration configuration) //, UserManager<User> userManager, RoleManager<IdentityRole<int>> roleManager
     {
         _context = context;
         _configuration = configuration;
-        _userManager = userManager;
-        _roleManager = roleManager;
+        //_userManager = userManager;
+        //_roleManager = roleManager;
     }
 
     [HttpPost("register")]
@@ -56,19 +56,24 @@ public class AuthController : ControllerBase
             Email = userObj.Email,
             Address = userObj.Address,
             PhoneNumber = userObj.PhoneNumber,
-            ZipCode = userObj.ZipCode
+            ZipCode = userObj.ZipCode,
+            Role = UserRoles.UserRole
 
             // In a real application, hash the password before saving it
             // Add other user-related properties
         };
-        var result = await _userManager.CreateAsync(user, userObj.Password);
 
-        if (!result.Succeeded)
+        string NewHashedPassword =  HashPassword( userObj.Password);
+
+        user.Password = NewHashedPassword;
+
+        if (NewHashedPassword == null)
         {
             return BadRequest(new { Message = "Failed to create user" });
         }
-
         
+
+
 
         // to insert values into customer table
         var customer = new Customer
@@ -79,6 +84,7 @@ public class AuthController : ControllerBase
             Email = userObj.Email,
             PhoneNumber = userObj.PhoneNumber,
             Address = userObj.Address,
+            
             
 
         };
@@ -93,7 +99,7 @@ public class AuthController : ControllerBase
 
         user.Customer = customer;   // understand what these two line of code means in depth!!!!!!!!!
         var userWithCustomer = _context.Users.Include(u => u.Customer).FirstOrDefault();
-        //_context.Users.Add(user);  
+        _context.Users.Add(user);  
         //---------------------------------------------
         /*In the Register action of your AuthController, 
          * you are using ASP.NET Core Identity's UserManager to create the user,
@@ -121,7 +127,18 @@ public class AuthController : ControllerBase
             return BadRequest(ModelState);
         }
 
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.UserName == userObj.UserName && u.Password == userObj.Password);
+        //var user = await _context.Users.FirstOrDefaultAsync(u => u.UserName == userObj.UserName && u.Password == userObj.Password);
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.UserName == userObj.UserName);
+
+        if (user == null)
+        {
+            return BadRequest(new { Message = "User Does not exist!!" });
+        }
+
+        if (!VerifyPassword(userObj.Password, user.Password))
+        {
+            return BadRequest(new { Message = "Invalid username or password" });
+        }
         //if (this.User.Password!=userObj.Password)
         //{
         //    return Unauthorized(new { Message = "Please enter correct Username or password!!." });
@@ -130,12 +147,11 @@ public class AuthController : ControllerBase
         //{
         //    return BadRequest(new { Message = "Password is Incorrect" });
         //}
+        //---------------------admin token generation and login------------------------------//
+       
 
-        if (user== null)
-        {
-            return BadRequest(new { Message = "User Does not exist!!" });
-        }
-        if (user.UserName.ToLower() == "admin"&& user.Password=="admin@123")
+        
+        if (user.Role.ToLower() == "admin")
         {
             // You can add custom logic here for handling admin login
             // For example, checking if the user is in the admin role
@@ -159,6 +175,7 @@ public class AuthController : ControllerBase
                 token = adminToken
             });
         }
+        //-------------------------user token generation -------------------------------//
 
         var token = GenerateJwtToken(user);
         var newAccessToken = token;
@@ -256,6 +273,65 @@ public class AuthController : ControllerBase
         // Serialize token to string
         return tokenHandler.WriteToken(token);
     }
+    private const int SaltSize = 16; // Change as needed
+    private const int HashSize = 20; // Change as needed
+    private const int Iterations = 10000; // Change as needed
+
+    public static string HashPassword(string password)
+    {
+        byte[] salt;
+        using (var rngCsp = new RNGCryptoServiceProvider())
+        {
+            rngCsp.GetBytes(salt = new byte[SaltSize]);
+        }
+
+        using (var key = new Rfc2898DeriveBytes(password, salt, Iterations))
+        {
+            byte[] hash = key.GetBytes(HashSize);
+
+            var hashBytes = new byte[SaltSize + HashSize];
+            Array.Copy(salt, 0, hashBytes, 0, SaltSize);
+            Array.Copy(hash, 0, hashBytes, SaltSize, HashSize);
+
+            string HashedPassword = Convert.ToBase64String(hashBytes);
+
+            return HashedPassword;
+        }
+    }
+
+    public static bool VerifyPassword(string password, string base64Hash)
+    {
+        byte[] hashBytes = Convert.FromBase64String(base64Hash);
+
+        if (hashBytes.Length != SaltSize + HashSize)
+        {
+            return false; // Invalid hash length
+        }
+
+        byte[] salt = new byte[SaltSize];
+        Array.Copy(hashBytes, 0, salt, 0, SaltSize);
+
+        using (var key = new Rfc2898DeriveBytes(password, salt, Iterations))
+        {
+            byte[] hash = key.GetBytes(HashSize);
+
+            for (var i = 0; i < HashSize; i++)
+            {
+                if (hashBytes[i + SaltSize] != hash[i])
+                {
+                    return false; // Hash mismatch
+                }
+            }
+            return true; // Password verified
+        }
+    }
+
+    public static string AddRole(string UserRole)
+    {
+
+        return null ;
+    }
+
 }
     
     
