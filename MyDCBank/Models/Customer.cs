@@ -37,7 +37,7 @@ namespace MyDCBank.Models
 
         //foreign key 
         [Required]
-        [ForeignKey("UserID")]
+        //[ForeignKey("UserID")]
         public int UserID { get; set; }
 
         //navigation property to show relation between customer and user.

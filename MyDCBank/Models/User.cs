@@ -1,9 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MyDCBank.Models
 {
-    public class User
+    public class User:IdentityUser<int>
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -43,6 +44,12 @@ namespace MyDCBank.Models
 
         [Display(Name = "Zip Code")]
         public string ZipCode { get; set; }
+
+        public string? Token { get; set; }
+
+        public DateTime RefreshTokenExpiryTime { get; set; }
+
+        public string? RefreshToken { get; set; }
 
 
         //navigation property

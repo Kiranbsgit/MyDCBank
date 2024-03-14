@@ -12,8 +12,8 @@ using MyDCBank.Data;
 namespace MyDCBank.Migrations
 {
     [DbContext(typeof(BankDBContext))]
-    [Migration("20240119083948_1")]
-    partial class _1
+    [Migration("20240314124748_3")]
+    partial class _3
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -41,26 +41,24 @@ namespace MyDCBank.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("AccountType")
+                    b.Property<string>("AccountType")
+                        .IsRequired()
                         .HasMaxLength(20)
-                        .HasColumnType("int");
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<decimal>("Balance")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("CustomerFirstName")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("CustomerID")
                         .HasColumnType("int");
-
-                    b.Property<string>("CustomerLastName")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("ErrorMessage")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("OpenDate")
                         .HasColumnType("datetime2");
@@ -74,6 +72,22 @@ namespace MyDCBank.Migrations
                     b.HasIndex("CustomerID");
 
                     b.ToTable("accounts");
+                });
+
+            modelBuilder.Entity("MyDCBank.Models.AccountModel", b =>
+                {
+                    b.Property<int>("CustomerID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CustomerID"), 1L, 1);
+
+                    b.Property<int>("AccountType")
+                        .HasColumnType("int");
+
+                    b.HasKey("CustomerID");
+
+                    b.ToTable("accountModels");
                 });
 
             modelBuilder.Entity("MyDCBank.Models.Card", b =>
@@ -236,34 +250,79 @@ namespace MyDCBank.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserID"), 1L, 1);
 
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("int");
+
                     b.Property<string>("Address")
                         .IsRequired()
                         .HasMaxLength(225)
                         .HasColumnType("nvarchar(225)");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("bit");
+
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
+
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
 
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Password")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("RefreshToken")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("RefreshTokenExpiryTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Token")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("bit");
 
                     b.Property<string>("UserName")
                         .IsRequired()
