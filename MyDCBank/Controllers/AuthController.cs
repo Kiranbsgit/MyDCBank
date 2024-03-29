@@ -78,6 +78,7 @@ public class AuthController : ControllerBase
         // to insert values into customer table
         var customer = new Customer
         {
+            UserName= userObj.UserName,
             FirstName = userObj.FirstName,
             LastName = userObj.LastName,
             DateOfBirth = userObj.DateOfBirth,
@@ -129,6 +130,7 @@ public class AuthController : ControllerBase
 
         //var user = await _context.Users.FirstOrDefaultAsync(u => u.UserName == userObj.UserName && u.Password == userObj.Password);
         var user = await _context.Users.FirstOrDefaultAsync(u => u.UserName == userObj.UserName);
+        var customer = await _context.Customers.FirstOrDefaultAsync(v=>v.UserName==userObj.UserName);
 
         if (user == null)
         {
@@ -139,6 +141,11 @@ public class AuthController : ControllerBase
         {
             return BadRequest(new { Message = "Invalid username or password" });
         }
+
+         string role = user.Role; // Get the user's role
+        int CustomerID = customer.CustomerID; // get customerId to retrieve the customer details in my profile.
+
+
         //if (this.User.Password!=userObj.Password)
         //{
         //    return Unauthorized(new { Message = "Please enter correct Username or password!!." });
@@ -151,7 +158,7 @@ public class AuthController : ControllerBase
        
 
         
-        if (user.Role.ToLower() == "admin")
+        if (role == "admin")
         {
             // You can add custom logic here for handling admin login
             // For example, checking if the user is in the admin role
@@ -172,7 +179,9 @@ public class AuthController : ControllerBase
             return Ok(new
             {
                 message = "Logged in as admin successfully",
-                token = adminToken
+                token = adminTokens,
+                role = role,
+                CustomerID = CustomerID
             });
         }
         //-------------------------user token generation -------------------------------//
@@ -193,12 +202,17 @@ public class AuthController : ControllerBase
         return Ok(new 
         {
             message = "Logged in successfully",
-            token = tokens
+            token = tokens,
+            role= role,
+            CustomerID=CustomerID
+
             
         }
 
         );      
     }
+
+    //--------------------------------********TOken generation methods************************_---------------------------------------\\
 
     private string GenerateJwtToken(User user)
     {
@@ -273,6 +287,8 @@ public class AuthController : ControllerBase
         // Serialize token to string
         return tokenHandler.WriteToken(token);
     }
+
+    //------------------------------------***********************************************__________________________________________________________\\
     private const int SaltSize = 16; // Change as needed
     private const int HashSize = 20; // Change as needed
     private const int Iterations = 10000; // Change as needed

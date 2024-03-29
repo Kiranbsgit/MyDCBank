@@ -9,6 +9,11 @@ namespace MyDCBank.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int CustomerID { get; set; }
 
+
+        [Required(ErrorMessage = "Username is required.")]
+        [MaxLength(50, ErrorMessage = "Username must be at most 50 characters.")]
+        public string UserName { get; set; }
+
         [Required]
         [MaxLength(50)]
         public string FirstName { get; set; }
