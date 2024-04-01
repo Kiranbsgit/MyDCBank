@@ -131,6 +131,7 @@ public class AuthController : ControllerBase
         //var user = await _context.Users.FirstOrDefaultAsync(u => u.UserName == userObj.UserName && u.Password == userObj.Password);
         var user = await _context.Users.FirstOrDefaultAsync(u => u.UserName == userObj.UserName);
         var customer = await _context.Customers.FirstOrDefaultAsync(v=>v.UserName==userObj.UserName);
+       
 
         if (user == null)
         {
@@ -144,6 +145,7 @@ public class AuthController : ControllerBase
 
          string role = user.Role; // Get the user's role
         int CustomerID = customer.CustomerID; // get customerId to retrieve the customer details in my profile.
+       
 
 
         //if (this.User.Password!=userObj.Password)

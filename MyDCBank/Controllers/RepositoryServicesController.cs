@@ -1,7 +1,8 @@
 ﻿    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
-    using MyDCBank.Data;
-    using MyDCBank.Models;
+using Microsoft.EntityFrameworkCore;
+using MyDCBank.Data;
+using MyDCBank.Models;
     using MyDCBank.Models.DTO;
     using MyDCBank.Services;
 
@@ -40,6 +41,56 @@
 
                 return customerViewModel;
             }
+        [HttpGet("Account")]
+        public async Task<ActionResult<AccountViewModel>>GetAccounts(int customerID)
+        {
+            var customer = await _context.Customers.FindAsync(customerID);
 
+            if (customer == null)
+            {
+                return NotFound("Customer not found.");
+            }
+
+            var accounts = _context.accounts.Where(a => a.CustomerID == customerID).ToList();
+
+            if (accounts == null || accounts.Count == 0)
+            {
+                return NotFound("No accounts found for this customer.");
+            }
+
+            var accountViewModels = accounts.Select(account => new AccountViewModel
+            {
+                AccountName = account.AccountName,
+                AccountNumber = account.AccountNumber,
+                AccountID = account.AccountID,
+                AccountType = account.AccountType.ToString(),
+                Balance = account.Balance,
+            });
+
+            return Ok(accountViewModels);
         }
+
+
+        [HttpGet("FindUser")]
+        public async Task<ActionResult<FindUserViewModel>>FindUser(string userName)
+        {
+
+            var customer = await _context.Customers.FirstOrDefaultAsync(c => c.UserName == userName);
+
+            if (customer == null)
+            {
+                return NotFound("Customer not found.");
+            }
+
+            var foundUser = new FindUserViewModel
+            {
+                CustomerID = customer.CustomerID,
+                // Include any other properties you need to return in the view model
+            };
+
+            return Ok(foundUser);
+        }
+
+
+    }
     }
